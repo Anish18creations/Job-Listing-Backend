@@ -1,8 +1,12 @@
 const express = require('express');
-
+const mongoose = require('mongoose');
+require("dotenv").config();
 //creating a server
 const app = express();
-console.log('Hi')
+
+//connecting to db
+mongoose.connect(process.env.MONGODB_URI).then(()=> console.log("Db connected!"))
+.catch((err)=>console.log(err))
 
 //health api is created to check whether our server is working or not
 app.get("/health" , (req,res)=>{
@@ -14,6 +18,14 @@ app.get("/health" , (req,res)=>{
     })
 })
 
+//api's that need to be created
+//login
+//register
+//edit
+//post
+//get details
+//home
+
 /*app.post("/post",(req,res)=>{
     res.json({
         service : "job listing server",
@@ -22,7 +34,7 @@ app.get("/health" , (req,res)=>{
     })
 })*/
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT , ()=>{
     console.log(`Server is running at PORT ${PORT}`);
 })
