@@ -49,11 +49,14 @@ router.post("/register" , async(req,res) => {
             password : hashedPassword,
         })
 
-        const userRes = userData.save();
+        const userRes = await userData.save();
 
         const token = await jwt.sign({userid : userRes._id} , process.env.JWT_SECRET);
 
-        res.json({message : "User registered successfully" , token : token});
+        res.json({message : "User registered successfully" ,
+         token : token ,
+         name : name
+        });
     }
     catch(err)
     {
@@ -65,5 +68,37 @@ router.post("/register" , async(req,res) => {
     //write into db
     //create model/schema
 });
+
+router.post("/login" , async(req,res)=>{
+    try {
+        const { email , password} = req.body;
+        if(!email || !password){
+            return res.status(400).json({
+                errorMessage : "Bad Request! Invalid credentials",
+            });
+        }
+
+        const userdetails = await User.findOne({email});
+
+        if(!userdetails){
+            return res.status(401).json({errorMessage:"Invalid credentials" });
+        }
+
+        const passwordcompare = await bcrypt.compare(password,userdetails.password);
+
+        if(!passwordcompare)
+            return res.status(401).json({errorMessage:"Invalid credentials" });
+
+        const token = await jwt.sign({userid : userdetails._id} , process.env.JWT_SECRET);
+
+        res.json({message : "User logged in successfully" ,
+         token : token ,
+         name : userdetails.name,
+        });
+    } 
+    catch (error) {
+        console.log(error);
+    }
+})
 
 module.exports = router;
