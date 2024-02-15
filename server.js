@@ -5,11 +5,12 @@ require("dotenv").config();
 const app = express();
 const authRoutes = require("./routes/auth");
 const jobRoutes = require("./routes/job");
+const cors = require('cors');
 
+app.use(cors());
 app.use(express.json());
 app.use("/api/v1/auth",authRoutes);
 app.use("/api/v1/job",jobRoutes);
-
 
 //connecting to db
 mongoose.connect(process.env.MONGODB_URI).then(()=> console.log("Db connected!"))

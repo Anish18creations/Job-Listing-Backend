@@ -26,7 +26,7 @@ router.post("/register" , async(req,res) => {
         const isexistinguser2 = await User.findOne({mobile:mobile})
         if(isexistinguser2) {
             return res.status(409).json({
-               message : "User already exists with the given mobile one" 
+               message : "User already exists with the given mobile no." 
             })
         }
 
@@ -55,7 +55,7 @@ router.post("/register" , async(req,res) => {
 
         res.json({message : "User registered successfully" ,
          token : token ,
-         name : name
+         name : name ,
         });
     }
     catch(err)
@@ -87,13 +87,14 @@ router.post("/login" , async(req,res)=>{
         const passwordcompare = await bcrypt.compare(password,userdetails.password);
 
         if(!passwordcompare)
-            return res.status(401).json({errorMessage:"Invalid credentials" });
+            return res.status(401).json({errorMessage:"Invalid credentials" , success: false});
 
         const token = await jwt.sign({userid : userdetails._id} , process.env.JWT_SECRET);
 
         res.json({message : "User logged in successfully" ,
          token : token ,
          name : userdetails.name,
+         success : true,
         });
     } 
     catch (error) {
